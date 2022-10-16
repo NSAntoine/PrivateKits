@@ -11,7 +11,7 @@ import UIKit
 import AppKit
 #endif
 
-import LaunchServicesBridge
+@_exported import LaunchServicesBridge
 
 /// A Swift Wrapper to manage Applications
 public struct ApplicationsManager {

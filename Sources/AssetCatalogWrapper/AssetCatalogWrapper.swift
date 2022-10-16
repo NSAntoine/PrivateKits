@@ -13,7 +13,7 @@ import AppKit
 #endif
 
 import UniformTypeIdentifiers
-import CoreUIBridge
+@_exported import CoreUIBridge
 
 public typealias RenditionCollection = [(type: RenditionType, renditions: [Rendition])]
 
