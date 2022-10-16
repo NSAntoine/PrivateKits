@@ -1,0 +1,9 @@
+module LaunchServicesBridge {
+    header "LaunchServices/LaunchServices.h"
+    export *
+}
+
+module CoreUIBridge {
+    header "CoreUI/CoreUI.h"
+    export *
+}
