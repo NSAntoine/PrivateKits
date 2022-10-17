@@ -35,7 +35,7 @@ public enum FSOperation: Codable {
     
     static private let fm = FileManager.default
     
-    static func perform(_ operation: FSOperation, url: URL) throws {
+    public static func perform(_ operation: FSOperation, url: URL) throws {
         switch operation {
         case .removeItem:
             try fm.removeItem(at: url)
