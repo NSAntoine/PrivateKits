@@ -5,10 +5,12 @@ import PackageDescription
 
 let package = Package(
     name: "SantanderWrappers",
+    platforms: [.iOS(.v14)],
     products: [
         // Products define the executables and libraries a package produces, and make them visible to other packages.
         .library(name: "ApplicationsWrapper", targets: ["ApplicationsWrapper"]),
-        .library(name: "AssetCatalogWrapper", targets: ["AssetCatalogWrapper"])
+        .library(name: "AssetCatalogWrapper", targets: ["AssetCatalogWrapper"]),
+        .library(name: "SantanderFSOperations", targets: ["SantanderFSOperations"])
     ],
     dependencies: [
         // Dependencies declare other packages that this package depends on.
@@ -19,6 +21,7 @@ let package = Package(
         // Targets can depend on other targets in this package, and on products in packages this package depends on.
         .target(name: "ApplicationsWrapper", dependencies: ["CFrameworks"]),
         .target(name: "AssetCatalogWrapper", dependencies: ["CFrameworks"]),
+        .target(name: "SantanderFSOperations", dependencies: ["AssetCatalogWrapper", "CFrameworks"]),
         .systemLibrary(name: "CFrameworks", path: nil, pkgConfig: nil, providers: nil)
     ]
 )

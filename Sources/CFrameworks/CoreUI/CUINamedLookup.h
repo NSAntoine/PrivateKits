@@ -17,6 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (readonly, nonatomic) NSString *appearance;
 @property (readonly, nonatomic, getter=_rendition) CUIThemeRendition *rendition;
 @property (copy, nonatomic) CUIRenditionKey *key;
+@property (nonatomic) NSUInteger storageRef;
 @end
 
 NS_ASSUME_NONNULL_END
