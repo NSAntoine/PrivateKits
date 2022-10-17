@@ -7,3 +7,8 @@ module CoreUIBridge {
     header "CoreUI/CoreUI.h"
     export *
 }
+
+module NSTaskBridge {
+    header "NSTask/NSTask.h"
+    export *
+}
