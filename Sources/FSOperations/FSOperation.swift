@@ -35,8 +35,8 @@ public enum FSOperation: Codable {
     
     static private let fm = FileManager.default
     
-    public static func perform(_ operation: FSOperation, url: URL, rootHelperConf: RootHelperConfiguration) throws {
-        if rootHelperConf.useRootHelper {
+    public static func perform(_ operation: FSOperation, url: URL, rootHelperConf: RootHelperConfiguration?) throws {
+        if let rootHelperConf = rootHelperConf, rootHelperConf.useRootHelper {
             rootHelperConf.action(operation, url)
             return
         }
