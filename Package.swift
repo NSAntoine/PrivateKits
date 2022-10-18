@@ -3,9 +3,11 @@
 
 import PackageDescription
 
+let coreUILinkerSetting = LinkerSetting.unsafeFlags(["Sources/AssetCatalogWrapper/CoreUI/CoreUI.framework/CoreUI.tbd"])
+
 let package = Package(
     name: "SantanderWrappers",
-    platforms: [.iOS(.v14)],
+    platforms: [.iOS(.v14), .macOS(.v11)],
     products: [
         // Products define the executables and libraries a package produces, and make them visible to other packages.
         .library(name: "ApplicationsWrapper", targets: ["ApplicationsWrapper"]),
@@ -22,8 +24,9 @@ let package = Package(
         // Targets can depend on other targets in this package, and on products in packages this package depends on.
         .target(name: "ApplicationsWrapper", dependencies: ["CFrameworks"]),
         .target(name: "AssetCatalogWrapper", dependencies: ["CFrameworks"]),
-        .target(name: "FSOperations", dependencies: ["AssetCatalogWrapper"]),
+        .target(name: "FSOperations", dependencies: ["AssetCatalogWrapper"], linkerSettings: [coreUILinkerSetting]),
         .target(name: "NSTask", dependencies: ["CFrameworks"]),
+        .testTarget(name: "FSOperationsTests", dependencies: ["FSOperations", "AssetCatalogWrapper"]),
         .systemLibrary(name: "CFrameworks", path: nil, pkgConfig: nil, providers: nil)
     ]
 )

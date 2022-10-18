@@ -24,14 +24,19 @@ public struct CodableRendition: Codable {
         self.renditionName = rendition.cuiRend.name()
         
         if let image = rendition.image {
+            #if canImport(UIKit)
             let uiImage = UIImage(cgImage: image)
-            
             switch UTType(filenameExtension: (rendition.cuiRend.name() as NSString).lastPathComponent) {
             case UTType.png:
                 self.itemData = uiImage.pngData()
             default:
                 self.itemData = uiImage.jpegData(compressionQuality: 1.0)
             }
+            #elseif canImport(AppKit)
+            self.itemData = NSImage(cgImage: image, size: CGSize(width: image.width, height: image.height)).tiffRepresentation
+            #endif
+            
+
         } else if let rawData = rendition.cuiRend.srcData {
             self.itemData = rawData
         } else { self.itemData = nil }

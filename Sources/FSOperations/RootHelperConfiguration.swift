@@ -9,7 +9,7 @@
 import Foundation
 
 public protocol RootHelperConfiguration {
-    typealias ActionHandler = ((FSOperation, URL) -> Void)
+    typealias ActionHandler = ((FSOperation) throws -> Void)
     
     var action: ActionHandler { get set }
     var useRootHelper: Bool { get }
