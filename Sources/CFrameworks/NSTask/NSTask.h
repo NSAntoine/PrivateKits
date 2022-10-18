@@ -8,7 +8,7 @@
 
 #include <TargetConditionals.h>
 
-#if !defined(NSTask_h) && !TARGET_OS_MAC
+#ifndef NSTask_h
 #define NSTask_h
 
 #import <Foundation/Foundation.h>
