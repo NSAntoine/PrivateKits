@@ -2,8 +2,12 @@
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
+import Foundation
 
-let coreUILinkerSetting = LinkerSetting.unsafeFlags(["Sources/AssetCatalogWrapper/CoreUI/CoreUI.framework/CoreUI.tbd"])
+let url = URL(fileURLWithPath: #file)
+    .deletingLastPathComponent()
+    .appendingPathComponent("Sources/AssetCatalogWrapper/CoreUI/CoreUI.framework/CoreUI.tbd")
+let coreUILinkerSetting = LinkerSetting.unsafeFlags([url.path])
 
 let package = Package(
     name: "SantanderWrappers",

@@ -125,6 +125,7 @@ public enum FSOperation: Codable {
         case .writeString(let url, let string):
             try string.write(to: url, atomically: true, encoding: .utf8)
         case .extractCatalog(let renditions, let resultPath):
+            try fm.createDirectory(at: resultPath, withIntermediateDirectories: true)
             var failedItems: [String: String] = [:]
             for rend in renditions {
                 let newURL = resultPath.appendingPathComponent(rend.renditionName)

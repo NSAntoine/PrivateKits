@@ -4,12 +4,13 @@
 //
 //  Created by Serena on 06/09/2022
 //
-    
-
-#include <TargetConditionals.h>
 
 #ifndef NSTask_h
 #define NSTask_h
+
+#include <TargetConditionals.h>
+
+#if TARGET_OS_IPHONE
 
 #import <Foundation/Foundation.h>
 
@@ -53,5 +54,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 NS_ASSUME_NONNULL_END
+
+#endif
 
 #endif /* NSTask_h */
