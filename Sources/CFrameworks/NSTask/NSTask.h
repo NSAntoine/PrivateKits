@@ -5,14 +5,13 @@
 //  Created by Serena on 06/09/2022
 //
 
-#ifndef NSTask_h
-#define NSTask_h
-
 #include <TargetConditionals.h>
 
-#if TARGET_OS_IPHONE
+#if !defined(NSTask_h) && TARGET_OS_IPHONE
+#define NSTask_h
 
-#import <Foundation/Foundation.h>
+@import Darwin;
+@import Foundation;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -53,8 +52,18 @@ NS_ASSUME_NONNULL_BEGIN
 -(void)terminate;
 
 @end
+
 NS_ASSUME_NONNULL_END
 
-#endif
+// MARK: - Posix Spawn stuff
+// these aren't available in the public SDK (for iOS), so we define them here
+
+#define POSIX_SPAWN_PERSONA_FLAGS_OVERRIDE 1
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wnullability-completeness" // shut the hell up about nullability specification
+int posix_spawnattr_set_persona_np(const posix_spawnattr_t* __restrict, uid_t, uint32_t);
+int posix_spawnattr_set_persona_uid_np(const posix_spawnattr_t* __restrict, uid_t);
+int posix_spawnattr_set_persona_gid_np(const posix_spawnattr_t* __restrict, uid_t);
+#pragma clang diagnostic pop
 
 #endif /* NSTask_h */
