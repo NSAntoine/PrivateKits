@@ -90,11 +90,11 @@ public enum FSOperation: Codable {
             }
         case .moveItem(let items, let resultPath):
             try _returnFailedItemsDictionaryIfAvailable(items) { url in
-                try fm.moveItem(at: url, to: resultPath)
+                try fm.moveItem(at: url, to: resultPath.appendingPathComponent(url.lastPathComponent))
             }
         case .copyItem(let items, let resultPath):
             try _returnFailedItemsDictionaryIfAvailable(items) { url in
-                try fm.copyItem(at: url, to: resultPath)
+                try fm.copyItem(at: url, to: resultPath.appendingPathComponent(url.lastPathComponent))
             }
         case .symlink(let itemsAndTheirResultPath):
             var failedItems: [URL: Error] = [:] // todo: use _returnFailedItemsDictionaryIfAvailable for this
