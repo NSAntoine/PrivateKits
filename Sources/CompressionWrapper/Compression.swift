@@ -23,6 +23,10 @@ enum CompressionErrors: Swift.Error, LocalizedError, CustomStringConvertible {
             return "Error while archiving: \(description)"
         }
     }
+    
+    var errorDescription: String? {
+        description
+    }
 }
 
 //struct ArchiveOptions: OptionSet {
