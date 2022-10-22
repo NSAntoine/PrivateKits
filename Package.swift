@@ -45,7 +45,7 @@ let package = Package(
         .target(name: "AssetCatalogWrapper", dependencies: ["CFrameworks"]),
         .target(name: "FSOperations", dependencies: ["AssetCatalogWrapper"], linkerSettings: [coreUILinkerSetting]),
         .target(name: "NSTask", dependencies: ["CFrameworks"]),
-        .target(name: "CompressionWrapper", dependencies: ["CFrameworks"], linkerSettings: [libArchiveLinkerSetting]),
+        .target(name: "CompressionWrapper", dependencies: ["CFrameworks"], linkerSettings: [.linkedLibrary("archive")]),
         .testTarget(name: "FSOperationsTests", dependencies: ["FSOperations", "AssetCatalogWrapper"]),
         .testTarget(name: "CompressionTests", dependencies: ["CompressionWrapper"]),
         .systemLibrary(name: "CFrameworks", path: nil, pkgConfig: nil, providers: nil)
