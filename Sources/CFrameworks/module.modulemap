@@ -12,3 +12,8 @@ module NSTaskBridge {
     header "NSTask/NSTask.h"
     export *
 }
+
+module libarchiveBridge {
+    header "libarchive/libarchive.h"
+    export *
+}

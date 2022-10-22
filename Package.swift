@@ -4,10 +4,24 @@
 import PackageDescription
 import Foundation
 
-let url = URL(fileURLWithPath: #file)
-    .deletingLastPathComponent()
-    .appendingPathComponent("Sources/AssetCatalogWrapper/CoreUI/CoreUI.framework/CoreUI.tbd")
-let coreUILinkerSetting = LinkerSetting.unsafeFlags([url.path])
+/// Returns a URL of the sources
+func pathInSources(componentToAppend: String) -> URL {
+    URL(fileURLWithPath: #file)
+        .deletingLastPathComponent()
+        .appendingPathComponent("Sources")
+        .appendingPathComponent(componentToAppend)
+}
+
+let coreUITBD = pathInSources(componentToAppend: "AssetCatalogWrapper/CoreUI/CoreUI.framework/CoreUI.tbd")
+let coreUILinkerSetting = LinkerSetting.unsafeFlags([coreUITBD.path])
+
+#if !os(macOS)
+let libArchiveTBD = pathInSources(componentToAppend: "CFrameworks/libarchive/libarchive-iOS.tbd")
+#else
+let libArchiveTBD = pathInSources(componentToAppend: "CFrameworks/libarchive/libarchive-macOS.tbd")
+#endif
+
+let libArchiveLinkerSetting = LinkerSetting.unsafeFlags([libArchiveTBD.path])
 
 let package = Package(
     name: "SantanderWrappers",
@@ -17,6 +31,7 @@ let package = Package(
         .library(name: "ApplicationsWrapper", targets: ["ApplicationsWrapper"]),
         .library(name: "AssetCatalogWrapper", targets: ["AssetCatalogWrapper"]),
         .library(name: "FSOperations", targets: ["FSOperations"]),
+        .library(name: "CompressionWrapper", targets: ["CompressionWrapper"]),
         .library(name: "NSTask", targets: ["NSTask"])
     ],
     dependencies: [
@@ -30,7 +45,9 @@ let package = Package(
         .target(name: "AssetCatalogWrapper", dependencies: ["CFrameworks"]),
         .target(name: "FSOperations", dependencies: ["AssetCatalogWrapper"], linkerSettings: [coreUILinkerSetting]),
         .target(name: "NSTask", dependencies: ["CFrameworks"]),
+        .target(name: "CompressionWrapper", dependencies: ["CFrameworks"], linkerSettings: [libArchiveLinkerSetting]),
         .testTarget(name: "FSOperationsTests", dependencies: ["FSOperations", "AssetCatalogWrapper"]),
+        .testTarget(name: "CompressionTests", dependencies: ["CompressionWrapper"]),
         .systemLibrary(name: "CFrameworks", path: nil, pkgConfig: nil, providers: nil)
     ]
 )

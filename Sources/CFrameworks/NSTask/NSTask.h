@@ -7,7 +7,7 @@
 
 #include <TargetConditionals.h>
 
-#if !defined(NSTask_h) && TARGET_OS_IPHONE
+#if !defined(NSTask_h) && (TARGET_OS_IPHONE && !TARGET_OS_MACCATALYST)
 #define NSTask_h
 
 @import Darwin;
