@@ -108,8 +108,9 @@ public class Compression {
         }
     }
     
-    /// Compresses the paths given (alongside their subdirectories)  to the given outputPath
-    public func compress(paths: [URL], outputPath: URL) throws {
+    /// Compresses the paths given (alongside their subdirectories)  to the given outputPath.
+    /// The process handler is called on every URL which gets processed, hence the name
+    public func compress(paths: [URL], outputPath: URL, processHandler: ((URL) -> Void)? = nil) throws {
         let a = archive_write_new()
         var entry: OpaquePointer? = nil
         let buff = UnsafeMutableRawPointer.allocate(byteCount: 8192, alignment: 4)
@@ -131,6 +132,7 @@ public class Compression {
                     throw CompressionErrors.failedToArchive(dsecription: "Path \(path.path) is an invalid path (Cannot generate filesystem representation).")
                 }
                 
+                processHandler?(path)
                 guard stat(fsRepresentation, &st) == 0 else {
                     throw CompressionErrors.failedToArchive(dsecription: "Failed to stat (get information of) path \(path.path): \(String.errnoString())")
                 }
