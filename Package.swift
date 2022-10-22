@@ -15,14 +15,6 @@ func pathInSources(componentToAppend: String) -> URL {
 let coreUITBD = pathInSources(componentToAppend: "AssetCatalogWrapper/CoreUI/CoreUI.framework/CoreUI.tbd")
 let coreUILinkerSetting = LinkerSetting.unsafeFlags([coreUITBD.path])
 
-#if !os(macOS)
-let libArchiveTBD = pathInSources(componentToAppend: "CFrameworks/libarchive/libarchive-iOS.tbd")
-#else
-let libArchiveTBD = pathInSources(componentToAppend: "CFrameworks/libarchive/libarchive-macOS.tbd")
-#endif
-
-let libArchiveLinkerSetting = LinkerSetting.unsafeFlags([libArchiveTBD.path])
-
 let package = Package(
     name: "SantanderWrappers",
     platforms: [.iOS(.v14), .macOS(.v11)],
@@ -46,8 +38,10 @@ let package = Package(
         .target(name: "FSOperations", dependencies: ["AssetCatalogWrapper"], linkerSettings: [coreUILinkerSetting]),
         .target(name: "NSTask", dependencies: ["CFrameworks"]),
         .target(name: "CompressionWrapper", dependencies: ["CFrameworks"], linkerSettings: [.linkedLibrary("archive")]),
+        
         .testTarget(name: "FSOperationsTests", dependencies: ["FSOperations", "AssetCatalogWrapper"]),
         .testTarget(name: "CompressionTests", dependencies: ["CompressionWrapper"]),
+        
         .systemLibrary(name: "CFrameworks", path: nil, pkgConfig: nil, providers: nil)
     ]
 )
