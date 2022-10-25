@@ -1,4 +1,4 @@
-// swift-tools-version: 5.7
+// swift-tools-version: 5.5
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
@@ -12,8 +12,11 @@ func pathInSources(componentToAppend: String) -> URL {
         .appendingPathComponent(componentToAppend)
 }
 
-let coreUITBD = pathInSources(componentToAppend: "AssetCatalogWrapper/CoreUI/CoreUI.framework/CoreUI.tbd")
+let coreUITBD = pathInSources(componentToAppend: "CFrameworks/CoreUI/CoreUI.tbd")
 let coreUILinkerSetting = LinkerSetting.unsafeFlags([coreUITBD.path])
+
+let di2TBD = pathInSources(componentToAppend: "CFrameworks/DiskImages2/DiskImages2.tbd")
+let di2LinkerSetting = LinkerSetting.unsafeFlags([di2TBD.path])
 
 let package = Package(
     name: "SantanderWrappers",
@@ -24,6 +27,7 @@ let package = Package(
         .library(name: "AssetCatalogWrapper", targets: ["AssetCatalogWrapper"]),
         .library(name: "FSOperations", targets: ["FSOperations"]),
         .library(name: "CompressionWrapper", targets: ["CompressionWrapper"]),
+        .library(name: "DiskImagesWrapper", targets: ["DiskImagesWrapper"]),
         .library(name: "NSTask", targets: ["NSTask"])
     ],
     dependencies: [
@@ -38,9 +42,11 @@ let package = Package(
         .target(name: "FSOperations", dependencies: ["AssetCatalogWrapper"], linkerSettings: [coreUILinkerSetting]),
         .target(name: "NSTask", dependencies: ["CFrameworks"]),
         .target(name: "CompressionWrapper", dependencies: ["CFrameworks"], linkerSettings: [.linkedLibrary("archive")]),
+        .target(name: "DiskImagesWrapper", dependencies: ["CFrameworks"], linkerSettings: [di2LinkerSetting]),
         
         .testTarget(name: "FSOperationsTests", dependencies: ["FSOperations", "AssetCatalogWrapper"]),
         .testTarget(name: "CompressionTests", dependencies: ["CompressionWrapper"]),
+        .testTarget(name: "DiskImagesTests", dependencies: ["DiskImagesWrapper"]),
         
         .systemLibrary(name: "CFrameworks", path: nil, pkgConfig: nil, providers: nil)
     ]

@@ -40,9 +40,10 @@ class CompressionTests: XCTestCase {
         let paths = [
             parentDir.appendingPathComponent("Tests.swift"),
             parentDir.appendingPathComponent("TestFile.swift"),
+            URL(fileURLWithPath: "/Users/user/Public")
         ]
         
-        try Compression.shared.compress(paths: paths, outputPath: parentDir.appendingPathComponent("Output.zip"))
+        try Compression.shared.compress(paths: paths, outputPath: parentDir.appendingPathComponent("Output.zip"), format: .tar)
     }
     
     func testBothArchiveAndExtract() throws {

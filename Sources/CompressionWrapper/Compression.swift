@@ -110,7 +110,7 @@ public class Compression {
     
     /// Compresses the paths given (alongside their subdirectories)  to the given outputPath.
     /// The process handler is called on every URL which gets processed, hence the name
-    public func compress(paths: [URL], outputPath: URL, processHandler: ((URL) -> Void)? = nil) throws {
+    public func compress(paths: [URL], outputPath: URL, format: FormatType, processHandler: ((URL) -> Void)? = nil) throws {
         let a = archive_write_new()
         var entry: OpaquePointer? = nil
         let buff = UnsafeMutableRawPointer.allocate(byteCount: 8192, alignment: 4)
@@ -119,7 +119,7 @@ public class Compression {
         var len: Int = 0
         
         archive_write_add_filter_gzip(a)
-        archive_write_set_format_cpio(a)
+        format.apply(to: a)
         try outputPath.withUnsafeFileSystemRepresentation { fsRepresentation in
             guard archive_write_open_filename(a, fsRepresentation) == ARCHIVE_OK else {
                 throw CompressionErrors.failedToArchive(dsecription: "Unable to open a destination to destination path \(outputPath.path)")
@@ -205,6 +205,39 @@ public class Compression {
             r = CInt(archive_write_data_block(aw, buffer, Int(size), offset))
             if r < ARCHIVE_OK {
                 throw CompressionErrors.failedToCopyData(description: "Failed to write data block: \(String(cString: archive_error_string(aw)))")
+            }
+        }
+    }
+    
+    public enum FormatType: CaseIterable, CustomStringConvertible {
+        case zip
+        case tar
+//        case sevenZip
+        
+        internal func apply(to a: OpaquePointer?) {
+            switch self {
+            case .zip:
+                archive_write_set_format_zip(a)
+            case .tar:
+                archive_write_set_format_gnutar(a)
+            }
+        }
+        
+        public var fileExtension: String {
+            switch self {
+            case .zip:
+                return "zip"
+            case .tar:
+                return "tar"
+            }
+        }
+        
+        public var description: String {
+            switch self {
+            case .zip:
+                return "Zip"
+            case .tar:
+                return "Tar"
             }
         }
     }
