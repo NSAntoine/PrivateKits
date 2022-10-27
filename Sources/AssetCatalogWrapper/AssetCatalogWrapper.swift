@@ -363,9 +363,7 @@ public extension CUICatalog {
         
         let isInternalLink: Bool = rendition.isInternalLink()
         let linkRect: CGRect = rendition._destinationFrame()
-        guard let keyList = rendition.linkingToRendition()?.keyList() else {
-            throw _Errors.failedToEditItem()
-        }
+        let keyList = rendition.linkingToRendition()?.keyList() ?? item.namedLookup.key.keyList()
         
         var carKey = themeStore.convertRenditionKey(toKeyData: keyList)
         if isInternalLink {
