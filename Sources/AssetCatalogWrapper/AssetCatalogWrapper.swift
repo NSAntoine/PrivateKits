@@ -93,9 +93,6 @@ public class Rendition: Hashable {
         switch type {
         case .pdf:
             return cuiRend.createImageFromPDFRendition(withScale: _getScreenScale())?.takeUnretainedValue()
-        case .svg:
-            guard let doc = cuiRend.svgDocument() else { return nil }
-            return SVGDocument(doc: doc).cgImage
         default:
             return nil
         }
