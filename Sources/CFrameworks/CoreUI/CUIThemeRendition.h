@@ -12,6 +12,7 @@
 #import <CoreGraphics/CoreGraphics.h>
 #include "structs.h"
 #include "CUIRenditionKey.h"
+#include "../CoreSVG/CoreSVG.h"
 
 #pragma clang diagnostic push
 // for the `Pointer is missing a nullability type specifier` warnings:
@@ -37,6 +38,7 @@
 - (int)pixelFormat;
 - (bool)isInternalLink;
 - (CUIRenditionKey *)linkingToRendition;
+- (CGSVGDocumentRef)svgDocument;
 - (struct CGRect)_destinationFrame;
 - (CGImageRef _Nullable)uncroppedImage;
 - (CGImageRef _Nullable)unslicedImage;

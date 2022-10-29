@@ -94,7 +94,7 @@ public class Rendition: Hashable {
         case .pdf:
             return cuiRend.createImageFromPDFRendition(withScale: _getScreenScale())?.takeUnretainedValue()
         case .svg:
-            guard let doc = cuiRend.value(forKey: "svgDocument") as? CGSVGDocumentRef else { return nil }
+            guard let doc = cuiRend.svgDocument() else { return nil }
             return SVGDocument(doc: doc).cgImage
         default:
             return nil
