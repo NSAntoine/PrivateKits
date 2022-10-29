@@ -1,0 +1,42 @@
+//
+//  SVGDocument.swift
+//  
+//
+//  Created by Serena on 29/10/2022
+//
+
+
+import Foundation
+@_exported import CoreSVGBridge
+
+public class SVGDocument {
+    public var doc: CGSVGDocumentRef
+    
+    public init(doc: CGSVGDocumentRef) {
+        self.doc = doc
+    }
+    
+    convenience public init?(fileURL: URL) {
+        guard let data = try? Data(contentsOf: fileURL) else { return nil }
+        self.init(data: data)
+    }
+    
+    public init(data: Data) {
+        self.doc = CGSVGDocumentCreateFromData(data as CFData, nil)
+    }
+    
+    #if canImport(UIKit)
+    public var uiImage: UIImage? {
+        return UIImage._image(with: doc, scale: UIScreen.main.scale, orientation: UIImage.Orientation.up.rawValue)
+    }
+    
+    public var cgImage: CGImage? {
+        guard let ioSurface = uiImage?._copyIOSurface()?.takeUnretainedValue() else { return nil }
+        return UICreateCGImageFromIOSurface(ioSurface).takeUnretainedValue()
+    }
+    #endif
+    
+    deinit {
+        CGSVGDocumentRelease(doc)
+    }
+}

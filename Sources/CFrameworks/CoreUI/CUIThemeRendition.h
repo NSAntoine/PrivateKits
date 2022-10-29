@@ -51,7 +51,7 @@
 
 
 @interface _CUIThemeSVGRendition : CUIThemeRendition
-- (id)rawData;
+- (NSData *)rawData;
 @end
 
 

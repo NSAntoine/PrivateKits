@@ -32,3 +32,7 @@ module DiskImages2Bridge {
     export *
 }
 
+module CoreSVGBridge {
+    header "CoreSVG/CoreSVG.h"
+    export *
+}

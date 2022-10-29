@@ -13,7 +13,10 @@ import AppKit
 #endif
 
 import UniformTypeIdentifiers
-@_exported import CoreUIBridge
+
+@_exported
+import CoreUIBridge
+import SVGWrapper
 
 public typealias RenditionCollection = [(type: RenditionType, renditions: [Rendition])]
 
@@ -85,12 +88,18 @@ public class Rendition: Hashable {
     public func _getImage() -> CGImage? {
         if let cgImage = cuiRend.uncroppedImage()?.takeUnretainedValue() {
             return cgImage
-        } else if type == .pdf,
-                  let pdfCgImage = cuiRend.createImageFromPDFRendition(withScale: _getScreenScale())?.takeUnretainedValue() {
-            return pdfCgImage
         }
         
-        return nil
+        switch type {
+        case .pdf:
+            return cuiRend.createImageFromPDFRendition(withScale: _getScreenScale())?.takeUnretainedValue()
+        case .svg:
+            guard let data = (cuiRend as? _CUIThemeSVGRendition)?.rawData() else { return nil }
+            return SVGDocument(data: data).cgImage
+        default:
+            return nil
+        }
+        
     }
     
     public init(_ namedLookup: CUINamedLookup) {
@@ -349,46 +358,39 @@ public extension CUICatalog {
             throw _Errors.unableToAccessCatalogFile(fileURL: fileURL)
         }
         
-        
-        switch newValue {
-        case .color(_):
-            return
-        default: break
-        }
-        //todo: get this working for colors
         // refactored from https://github.com/joey-gm/Aphrodite/blob/a334eb6a7c4863897723c968bd7a083ae1df75b9/Aphrodite/Models/AssetCatalog.swift#L181
-        var rendition = item.cuiRend
-        let assetStorage = keyStore
-        let themeStore = _themeStore()
-        
-        let isInternalLink: Bool = rendition.isInternalLink()
-        let linkRect: CGRect = rendition._destinationFrame()
-        let keyList = rendition.linkingToRendition()?.keyList() ?? item.namedLookup.key.keyList()
-        
-        var carKey = themeStore.convertRenditionKey(toKeyData: keyList)
-        if isInternalLink {
-            let keyList = rendition.linkingToRendition()?.keyList()
-            carKey = themeStore.convertRenditionKey(toKeyData: keyList)
-            rendition = CUIThemeRendition(csiData: assetStorage.asset(forKey: carKey!), forKey: keyList)
-        }
-        
-        guard let carKey = carKey else {
-            throw _Errors.failedToEditItem(lineFailed: #line)
-        }
-        
-        let unslicedSize: CGSize = rendition.unslicedSize()
-        let renditionLayout = rendition.type == 0 ? Int16(rendition.subtype) : Int16(rendition.type)
-        guard let generator = CSIGenerator(canvasSize: unslicedSize, sliceCount: 1, layout: renditionLayout),
-              let wrapper = CSIBitmapWrapper(pixelWidth: UInt32(unslicedSize.width),
-                                             pixelHeight: UInt32(unslicedSize.height))
-        else {
-            throw _Errors.failedToEditItem()
-        }
-        
-        let context = Unmanaged<CGContext>.fromOpaque(wrapper.bitmapContext()).takeUnretainedValue()
-        
         switch newValue {
         case .image(let newImage):
+            var rendition = item.cuiRend
+            let assetStorage = keyStore
+            let themeStore = _themeStore()
+            
+            let isInternalLink: Bool = rendition.isInternalLink()
+            let linkRect: CGRect = rendition._destinationFrame()
+            let keyList = rendition.linkingToRendition()?.keyList() ?? item.namedLookup.key.keyList()
+            
+            var carKey = themeStore.convertRenditionKey(toKeyData: keyList)
+            if isInternalLink {
+                let keyList = rendition.linkingToRendition()?.keyList()
+                carKey = themeStore.convertRenditionKey(toKeyData: keyList)
+                rendition = CUIThemeRendition(csiData: assetStorage.asset(forKey: carKey!), forKey: keyList)
+            }
+            
+            guard let carKey = carKey else {
+                throw _Errors.failedToEditItem(lineFailed: #line)
+            }
+            
+            let unslicedSize: CGSize = rendition.unslicedSize()
+            let renditionLayout = rendition.type == 0 ? Int16(rendition.subtype) : Int16(rendition.type)
+            guard let generator = CSIGenerator(canvasSize: unslicedSize, sliceCount: 1, layout: renditionLayout),
+                  let wrapper = CSIBitmapWrapper(pixelWidth: UInt32(unslicedSize.width),
+                                                 pixelHeight: UInt32(unslicedSize.height))
+            else {
+                throw _Errors.failedToEditItem()
+            }
+            
+            let context = Unmanaged<CGContext>.fromOpaque(wrapper.bitmapContext()).takeUnretainedValue()
+            
             if isInternalLink {
                 if let existingImage = rendition.unslicedImage()?.takeUnretainedValue() {
                     context.draw(existingImage, in: CGRect(origin: .zero, size: unslicedSize))
@@ -399,32 +401,32 @@ public extension CUICatalog {
             } else {
                 context.draw(newImage, in: CGRect(origin: .zero, size: unslicedSize))
             }
+            
+            //Add Bitmap Wrapper and Set Rendition Properties
+            generator.addBitmap(wrapper)
+            generator.addSliceRect(rendition._destinationFrame())
+            let flags = rendition.renditionFlags()?.pointee
+            generator.name                          = rendition.name()
+            generator.blendMode                     = rendition.blendMode
+            generator.colorSpaceID                  = Int16(rendition.colorSpaceID())
+            generator.exifOrientation               = rendition.exifOrientation
+            generator.opacity                       = rendition.opacity
+            generator.scaleFactor                   = UInt32(rendition.scale())
+            generator.templateRenderingMode         = rendition.templateRenderingMode()
+            generator.utiType                       = rendition.utiType()
+            generator.isVectorBased                 = rendition.isVectorBased()
+            generator.excludedFromContrastFilter    = Bool(truncating: (flags?.isExcludedFromContrastFilter ?? 0) as NSNumber)
+            
+            guard let csiRep = generator.csiRepresentation(withCompression: true) else {
+                throw _Errors.failedToEditItem()
+            }
+            
+            assetStorage.setAsset(csiRep, forKey: carKey)
         case .color(_):
-            break
-//            context.clear(linkRect.insetBy(dx: -2, dy: -2))
-//            context.setFillColor(newColor)
+            //todo: get this working for colors
+            NSLog("\(#function): WARNING: setting a new color does not work yet.")
+            return
         }
-        
-        //Add Bitmap Wrapper and Set Rendition Properties
-        generator.addBitmap(wrapper)
-        generator.addSliceRect(rendition._destinationFrame())
-        let flags = rendition.renditionFlags()?.pointee
-        generator.name                          = rendition.name()
-        generator.blendMode                     = rendition.blendMode
-        generator.colorSpaceID                  = Int16(rendition.colorSpaceID())
-        generator.exifOrientation               = rendition.exifOrientation
-        generator.opacity                       = rendition.opacity
-        generator.scaleFactor                   = UInt32(rendition.scale())
-        generator.templateRenderingMode         = rendition.templateRenderingMode()
-        generator.utiType                       = rendition.utiType()
-        generator.isVectorBased                 = rendition.isVectorBased()
-        generator.excludedFromContrastFilter    = Bool(truncating: (flags?.isExcludedFromContrastFilter ?? 0) as NSNumber)
-        
-        guard let csiRep = generator.csiRepresentation(withCompression: true) else {
-            throw _Errors.failedToEditItem()
-        }
-        
-        assetStorage.setAsset(csiRep, forKey: carKey)
         
         try writekeyStore(keyStore, to: fileURL)
     }

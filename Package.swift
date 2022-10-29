@@ -12,11 +12,18 @@ func pathInSources(componentToAppend: String) -> URL {
         .appendingPathComponent(componentToAppend)
 }
 
-let coreUITBD = pathInSources(componentToAppend: "CFrameworks/CoreUI/CoreUI.tbd")
+let sourcesDirectory = URL(fileURLWithPath: #file)
+    .deletingLastPathComponent()
+    .appendingPathComponent("Sources")
+
+let coreUITBD = sourcesDirectory.appendingPathComponent("CFrameworks/CoreUI/CoreUI.tbd")
 let coreUILinkerSetting = LinkerSetting.unsafeFlags([coreUITBD.path])
 
-let di2TBD = pathInSources(componentToAppend: "CFrameworks/DiskImages2/DiskImages2.tbd")
+let di2TBD = sourcesDirectory.appendingPathComponent("CFrameworks/DiskImages2/DiskImages2.tbd")
 let di2LinkerSetting = LinkerSetting.unsafeFlags([di2TBD.path])
+
+let coreSVGTBD = sourcesDirectory.appendingPathComponent("CFrameworks/CoreSVG/CoreSVG.tbd")
+let coreSVGLinkerSetting = LinkerSetting.unsafeFlags([coreSVGTBD.path])
 
 let package = Package(
     name: "SantanderWrappers",
@@ -26,6 +33,7 @@ let package = Package(
         .library(name: "ApplicationsWrapper", targets: ["ApplicationsWrapper"]),
         .library(name: "AssetCatalogWrapper", targets: ["AssetCatalogWrapper"]),
         .library(name: "FSOperations", targets: ["FSOperations"]),
+        .library(name: "SVGWrapper", targets: ["SVGWrapper"]),
         .library(name: "CompressionWrapper", targets: ["CompressionWrapper"]),
         .library(name: "DiskImagesWrapper", targets: ["DiskImagesWrapper"]),
         .library(name: "NSTask", targets: ["NSTask"])
@@ -38,11 +46,13 @@ let package = Package(
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
         // Targets can depend on other targets in this package, and on products in packages this package depends on.
         .target(name: "ApplicationsWrapper", dependencies: ["CFrameworks"]),
-        .target(name: "AssetCatalogWrapper", dependencies: ["CFrameworks"]),
-        .target(name: "FSOperations", dependencies: ["AssetCatalogWrapper"], linkerSettings: [coreUILinkerSetting]),
-        .target(name: "NSTask", dependencies: ["CFrameworks"]),
+        .target(name: "AssetCatalogWrapper", dependencies: ["CFrameworks", "SVGWrapper"], linkerSettings: [coreUILinkerSetting]),
         .target(name: "CompressionWrapper", dependencies: ["CFrameworks"], linkerSettings: [.linkedLibrary("archive")]),
         .target(name: "DiskImagesWrapper", dependencies: ["CFrameworks"], linkerSettings: [di2LinkerSetting]),
+        .target(name: "SVGWrapper", dependencies: ["CFrameworks"], linkerSettings: [coreSVGLinkerSetting]),
+        
+        .target(name: "FSOperations", dependencies: ["AssetCatalogWrapper"], linkerSettings: [coreUILinkerSetting]),
+        .target(name: "NSTask", dependencies: ["CFrameworks"]),
         
         .testTarget(name: "FSOperationsTests", dependencies: ["FSOperations", "AssetCatalogWrapper"]),
         .testTarget(name: "CompressionTests", dependencies: ["CompressionWrapper"]),
