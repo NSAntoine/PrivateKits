@@ -298,7 +298,7 @@ public enum RenditionType: Codable, Hashable, CustomStringConvertible {
     
     public var isEditable: Bool {
         switch self {
-        case .image, .icon:
+        case .image, .icon, .color:
             return true
         default:
             return false
@@ -402,27 +402,29 @@ public extension CUICatalog {
             //Add Bitmap Wrapper and Set Rendition Properties
             generator.addBitmap(wrapper)
             generator.addSliceRect(rendition._destinationFrame())
-            let flags = rendition.renditionFlags()?.pointee
-            generator.name                          = rendition.name()
-            generator.blendMode                     = rendition.blendMode
-            generator.colorSpaceID                  = Int16(rendition.colorSpaceID())
-            generator.exifOrientation               = rendition.exifOrientation
-            generator.opacity                       = rendition.opacity
-            generator.scaleFactor                   = UInt32(rendition.scale())
-            generator.templateRenderingMode         = rendition.templateRenderingMode()
-            generator.utiType                       = rendition.utiType()
-            generator.isVectorBased                 = rendition.isVectorBased()
-            generator.excludedFromContrastFilter    = Bool(truncating: (flags?.isExcludedFromContrastFilter ?? 0) as NSNumber)
+            generator.prepareToEdit(forRendition: rendition)
             
             guard let csiRep = generator.csiRepresentation(withCompression: true) else {
                 throw _Errors.failedToEditItem()
             }
             
             assetStorage.setAsset(csiRep, forKey: carKey)
-        case .color(_):
-            //todo: get this working for colors
-            NSLog("\(#function): WARNING: setting a new color does not work yet.")
-            return
+        case .color(let cgColor):
+            let components = try cgColor.components
+                .unwrap(orThrow: "Failed to edit item \(item.name): Failed to get color components of new color.")
+            let generator = try CSIGenerator(colorNamed: nil,
+                                             colorSpaceID: UInt(item.cuiRend.colorSpaceID()), components: components)
+                .unwrap(orThrow: "Failed to edit item \(item.name): Failed to generate a CSIGenerator in order to edit the item.")
+            
+            let csiRepresentation = try generator.csiRepresentation(withCompression: true)
+                .unwrap(orThrow: "Failed to generate CSI Representation of the new color.")
+            
+            let themeStore = _themeStore()
+            let keyData = try themeStore.convertRenditionKey(toKeyData: item.namedLookup.key.keyList())
+                .unwrap(orThrow: "Failed to generate data of new item.")
+            guard keyStore.setAsset(csiRepresentation, forKey: keyData) else {
+                throw _Errors.failedToEditItem(description: "Failed to set new data for asset.")
+            }
         }
         
         try writekeyStore(keyStore, to: fileURL)
@@ -450,24 +452,65 @@ public extension CUICatalog {
         // for when `convertRenditionKey` fails
         case unableToAccessItemData
         
-        case failedToEditItem(lineFailed: Int = #line)
+        case failedToEditItem(lineFailed: Int = #line, file: String = #file, description: String? = nil)
         
         var errorDescription: String? {
             switch self {
             case .unableToAccessCatalogFile(let fileURL):
-                return "Unable to read catalog file \(fileURL.lastPathComponent)"
+                return "Unable to init CUIMutableCommonAssetStorage for \(fileURL.path)"
             case .unableToWriteToCatalogFile(let fileURL):
                 return "Unable to write to catalog file \(fileURL.lastPathComponent)"
             case .unableToAccessItemData:
                 return "Unable to access data of item"
-            case .failedToEditItem(let lineFailed):
+            case .failedToEditItem(let lineFailed, let file, let description):
                 #if DEBUG
-                return "Failed to edit item, failed at line \(lineFailed)"
+                return "Failed to edit item, failed at \(file):\(lineFailed), cause: \(description ?? "Unknown.")"
                 #else
-                return "Failed to edit item, unknown cause. Blame CoreUI!"
+                return "Failed to edit item: \(description ?? "unknown cause. Blame CoreUI!")"
                 #endif
             }
         }
     }
     
+}
+
+private extension CSIGenerator {
+    func prepareToEdit(forRendition rendition: CUIThemeRendition) {
+        let flags = rendition.renditionFlags()?.pointee
+        
+        name = rendition.name()
+        blendMode = rendition.blendMode
+        
+        colorSpaceID                  = Int16(rendition.colorSpaceID())
+        exifOrientation               = rendition.exifOrientation
+        opacity                       = rendition.opacity
+        scaleFactor                   = UInt32(rendition.scale())
+        templateRenderingMode         = rendition.templateRenderingMode()
+        utiType                       = rendition.utiType()
+        isVectorBased                 = rendition.isVectorBased()
+        excludedFromContrastFilter    = Bool(truncating: (flags?.isExcludedFromContrastFilter ?? 0) as NSNumber)
+    }
+}
+
+internal extension Optional {
+    func unwrap(orThrow error: Error) throws -> Wrapped {
+        guard let self = self else { throw error }
+        return self
+    }
+    
+    func unwrap(orThrow error: String) throws -> Wrapped {
+        return try self.unwrap(orThrow: _Error.stringError(error))
+    }
+    
+    // private enum
+    private enum _Error: Error, LocalizedError {
+        case stringError(String)
+        
+        var errorDescription: String? {
+            switch self {
+            case .stringError(let description):
+                return description
+            }
+        }
+    }
 }
