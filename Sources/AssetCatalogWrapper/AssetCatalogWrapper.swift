@@ -82,6 +82,9 @@ public class Rendition: Hashable {
     public let type: RenditionType
     public let name: String
     
+    @available(*, unavailable, message: "Renamed to `representation`")
+    public var preview: Representation? { fatalError() }
+    
     public lazy var representation: Representation? = Representation(self)
     public lazy var image: CGImage? = _getImage()
     
