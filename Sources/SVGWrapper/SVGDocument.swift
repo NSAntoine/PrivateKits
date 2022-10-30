@@ -29,11 +29,6 @@ public class SVGDocument {
     public var uiImage: UIImage? {
         return UIImage._image(with: doc, scale: UIScreen.main.scale, orientation: UIImage.Orientation.up.rawValue)
     }
-    
-    public var cgImage: CGImage? {
-        guard let ioSurface = uiImage?._copyIOSurface()?.takeUnretainedValue() else { return nil }
-        return UICreateCGImageFromIOSurface(ioSurface).takeUnretainedValue()
-    }
     #endif
     
     deinit {

@@ -6,7 +6,10 @@
 //
 	
 
-#import <UIKit/UIKit.h>
+#if __has_include(<UIKit/UIKit.h>)
+@import UIKit;
+#endif
+@import CoreGraphics;
 
 #ifndef CoreSVG_h
 #define CoreSVG_h
@@ -22,12 +25,12 @@ CGSize CGSVGDocumentGetCanvasSize(CGSVGDocumentRef);
 CGSVGDocumentRef CGSVGDocumentRetain(struct CGSVGDocument);
 void CGSVGDocumentRelease(CGSVGDocumentRef);
 
+#if __has_include(<UIKit/UIKit.h>)
 // UIImage init from a SVG doc
 @interface UIImage (CoreSVGPrivate)
 +(instancetype)_imageWithCGSVGDocument:(struct CGSVGDocument *)arg0 scale:(CGFloat)arg1 orientation:(NSInteger)arg2;
 -(IOSurfaceRef)_copyIOSurface;
 @end
-
-CGImageRef UICreateCGImageFromIOSurface(IOSurfaceRef ioSurface);
+#endif
 
 #endif /* CoreSVG_h */
