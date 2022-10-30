@@ -82,7 +82,7 @@ public class Rendition: Hashable {
     public let type: RenditionType
     public let name: String
     
-    public lazy var preview: RenditionPreview? = RenditionPreview(self)
+    public lazy var representation: Representation? = Representation(self)
     public lazy var image: CGImage? = _getImage()
     
     public func _getImage() -> CGImage? {
@@ -231,6 +231,36 @@ public class Rendition: Hashable {
             }
         }
     }
+    
+    public enum Representation: Hashable {
+        case color(CGColor)
+        case image(CGImage)
+        
+        #if canImport(UIKit)
+        public var uiView: UIView {
+            var view = UIView()
+            switch self {
+            case .color(let cgColor):
+                view.backgroundColor = UIColor(cgColor: cgColor)
+            case .image(let cgImage):
+                view = UIImageView(image: UIImage(cgImage: cgImage))
+                view.clipsToBounds = true
+            }
+            
+            return view
+        }
+        #endif
+        
+        public init?(_ rendition: Rendition) {
+            if let cgColor = rendition.cuiRend.cgColor()?.takeUnretainedValue() {
+                self = .color(cgColor)
+            } else if let image = rendition.image {
+                self = .image(image)
+            } else {
+                return nil
+            }
+        }
+    }
 }
 
 public enum RenditionType: Codable, Hashable, CustomStringConvertible {
@@ -307,36 +337,8 @@ public enum RenditionType: Codable, Hashable, CustomStringConvertible {
     
 }
 
-public enum RenditionPreview: Hashable {
-    case color(CGColor)
-    case image(CGImage)
-    
-    #if canImport(UIKit)
-    public var uiView: UIView {
-        var view = UIView()
-        switch self {
-        case .color(let cgColor):
-            view.backgroundColor = UIColor(cgColor: cgColor)
-        case .image(let cgImage):
-            view = UIImageView(image: UIImage(cgImage: cgImage))
-            view.clipsToBounds = true
-        }
-        
-        return view
-    }
-    #endif
-    
-    public init?(_ rendition: Rendition) {
-        if let cgColor = rendition.cuiRend.cgColor()?.takeUnretainedValue() {
-            self = .color(cgColor)
-        } else if let image = rendition.image {
-            self = .image(image)
-        } else {
-            return nil
-        }
-    }
-    
-}
+@available(*, deprecated, message: "Renamed to Rendition.Representation")
+public typealias RenditionPreview = Rendition.Representation
 
 public extension CUICatalog {
     /// Removes an item, and returns a new, updated catalog for the file URL
@@ -350,7 +352,7 @@ public extension CUICatalog {
         try writekeyStore(keyStore, to: fileURL)
     }
     
-    func editItem(_ item: Rendition, fileURL: URL, to newValue: RenditionPreview) throws {
+    func editItem(_ item: Rendition, fileURL: URL, to newValue: Rendition.Representation) throws {
         guard let keyStore = CUIMutableCommonAssetStorage(path: fileURL.path, forWriting: true) else {
             throw _Errors.unableToAccessCatalogFile(fileURL: fileURL)
         }
