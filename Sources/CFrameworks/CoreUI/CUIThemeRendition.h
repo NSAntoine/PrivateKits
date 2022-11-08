@@ -9,7 +9,7 @@
 #ifndef CUIThemeRendition_h
 #define CUIThemeRendition_h
 
-#import <CoreGraphics/CoreGraphics.h>
+@import CoreGraphics;
 #include "structs.h"
 #include "CUIRenditionKey.h"
 #include "../CoreSVG/CoreSVG.h"

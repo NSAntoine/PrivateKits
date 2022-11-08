@@ -8,7 +8,7 @@
 
 #ifndef CSIBitmapWrapper_h
 #define CSIBitmapWrapper_h
-#include <CoreGraphics/CoreGraphics.h>
+@import CoreGraphics.CGContext;
 
 @interface CSIBitmapWrapper : NSObject
 - (CGContextRef *)bitmapContext;

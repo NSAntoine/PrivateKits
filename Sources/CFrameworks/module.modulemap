@@ -36,3 +36,8 @@ module CoreSVGBridge {
     header "CoreSVG/CoreSVG.h"
     export *
 }
+
+module MediaPlayerPrivate {
+    header "MediaPlayer/MediaPlayerPrivate.h"
+    export *
+}

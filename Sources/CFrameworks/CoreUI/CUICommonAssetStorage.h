@@ -8,7 +8,7 @@
 
 #ifndef CUICommonAssetStorage_h
 #define CUICommonAssetStorage_h
-#import <Foundation/Foundation.h>
+@import Foundation;
 #include "structs.h"
 
 NS_ASSUME_NONNULL_BEGIN

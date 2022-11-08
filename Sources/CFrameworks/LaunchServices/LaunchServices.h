@@ -11,9 +11,9 @@
 #define UIKIT_AVAILABLE __has_include(<UIKit/UIKit.h>)
 
 #if UIKIT_AVAILABLE
-#import <UIKit/UIKit.h>
+@import UIKit;
 #elif __has_include(<AppKit/AppKit.h>)
-#import <AppKit/AppKit.h>
+@import AppKit;
 #endif
 
 NS_ASSUME_NONNULL_BEGIN

@@ -8,6 +8,7 @@
 
 import Foundation
 @_exported import CoreSVGBridge
+import MediaPlayerPrivate
 
 public class SVGDocument {
     public var doc: CGSVGDocumentRef

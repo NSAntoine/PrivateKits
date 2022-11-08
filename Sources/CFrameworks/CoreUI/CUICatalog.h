@@ -8,7 +8,7 @@
 
 #ifndef CUICatalog_h
 #define CUICatalog_h
-#import <Foundation/Foundation.h>
+@import Foundation;
 
 #include "CUINamedLookup.h"
 #include "CUIStructuredThemeStore.h"
