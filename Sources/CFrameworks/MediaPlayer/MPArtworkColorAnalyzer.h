@@ -12,6 +12,10 @@
 #if __has_include(<UIKit/UIKit.h>)
 @import MediaPlayer;
 
+#include "MPArtworkColorAnalysis.h"
+
+typedef void (^AnalyzerReturnBlock)(MPArtworkColorAnalysis * _Null_unspecified);
+
 @interface MPArtworkColorAnalyzer : NSObject {
 
     long long _algorithm;
@@ -20,13 +24,10 @@
 }
 
 @property (nonatomic,readonly) long long algorithm;
-@property (nonatomic,readonly) UIImage * image;
 
 -(long long)algorithm;
--(UIImage *)image;
--(instancetype)initWithImage:(UIImage *)arg1 algorithm:(long long)arg2 ;
--(void)analyzeWithCompletionHandler:(/*^block*/id)arg1 ;
--(id)_fallbackColorAnalysis;
+-(_Nonnull instancetype)initWithImage:(UIImage * _Nonnull)arg1 algorithm:(long long)arg2 ;
+-(void)analyzeWithCompletionHandler:(AnalyzerReturnBlock _Nonnull)arg1 ;
 @end
 
 #endif
