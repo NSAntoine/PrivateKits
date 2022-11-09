@@ -14,7 +14,7 @@
 
 #include "MPArtworkColorAnalysis.h"
 
-typedef void (^AnalyzerReturnBlock)(MPArtworkColorAnalysis * _Null_unspecified);
+typedef void (^AnalyzerReturnBlock)(MPArtworkColorAnalyzer * _Null_unspecified, MPArtworkColorAnalysis * _Null_unspecified);
 
 @interface MPArtworkColorAnalyzer : NSObject {
 

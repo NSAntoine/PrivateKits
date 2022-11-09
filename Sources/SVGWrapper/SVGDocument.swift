@@ -6,8 +6,9 @@
 //
 
 
+@_exported
+import CoreSVGBridge
 import Foundation
-@_exported import CoreSVGBridge
 
 public class SVGDocument {
     public var doc: CGSVGDocumentRef

@@ -16,7 +16,6 @@ import UniformTypeIdentifiers
 
 @_exported
 import CoreUIBridge
-import SVGWrapper
 
 public typealias RenditionCollection = [(type: RenditionType, renditions: [Rendition])]
 
