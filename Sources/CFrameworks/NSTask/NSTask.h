@@ -66,4 +66,6 @@ int posix_spawnattr_set_persona_uid_np(const posix_spawnattr_t* __restrict, uid_
 int posix_spawnattr_set_persona_gid_np(const posix_spawnattr_t* __restrict, uid_t);
 #pragma clang diagnostic pop
 
+int proc_pidpath(pid_t pid, void *buffer, uint32_t buffersize);
+
 #endif /* NSTask_h */
