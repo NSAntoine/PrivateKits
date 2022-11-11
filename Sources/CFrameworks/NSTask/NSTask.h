@@ -6,12 +6,12 @@
 //
 
 #include <TargetConditionals.h>
+@import Darwin;
 
 #if !defined(NSTask_h)
 #define NSTask_h
 
 #if (TARGET_OS_IPHONE && !TARGET_OS_MACCATALYST)
-@import Darwin;
 @import Foundation;
 
 NS_ASSUME_NONNULL_BEGIN
