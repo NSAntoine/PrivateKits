@@ -10,14 +10,17 @@ import libarchiveBridge
 
 enum CompressionErrors: Swift.Error, LocalizedError, CustomStringConvertible {
     case failedToCopyData(description: String)
-    case failedToExtract(description: String)
+    case failedToExtract(description: String, line: Int = #line)
     case failedToArchive(dsecription: String)
     
     var description: String {
         switch self {
         case .failedToCopyData(let description):
             return "Failed to copy data: \(description)"
-        case .failedToExtract(let description):
+        case .failedToExtract(let description, let line):
+            #if DEBUG
+            return "Failed to extract file: \(description) (line: \(line))"
+            #else
             return "Failed to extract file: \(description)"
         case .failedToArchive(let description):
             return "Error while archiving: \(description)"
