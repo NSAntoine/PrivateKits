@@ -97,7 +97,6 @@ public class Compression {
             
             r = archive_write_header(ext, archiveEntry)
             if (r < ARCHIVE_OK) {
-                print(r == ARCHIVE_WARN)
                 throw CompressionErrors.failedToExtract(description: String(cString: archive_error_string(ext)))
             }
             
