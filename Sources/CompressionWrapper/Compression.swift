@@ -22,6 +22,7 @@ enum CompressionErrors: Swift.Error, LocalizedError, CustomStringConvertible {
             return "Failed to extract file: \(description) (line: \(line))"
             #else
             return "Failed to extract file: \(description)"
+            #endif
         case .failedToArchive(let description):
             return "Error while archiving: \(description)"
         }
