@@ -10,6 +10,7 @@
 #if !defined(NSTask_h) && (TARGET_OS_IPHONE && !TARGET_OS_MACCATALYST)
 #define NSTask_h
 
+#if (TARGET_OS_IPHONE && !TARGET_OS_MACCATALYST)
 @import Darwin;
 @import Foundation;
 
@@ -65,7 +66,11 @@ int posix_spawnattr_set_persona_np(const posix_spawnattr_t* __restrict, uid_t, u
 int posix_spawnattr_set_persona_uid_np(const posix_spawnattr_t* __restrict, uid_t);
 int posix_spawnattr_set_persona_gid_np(const posix_spawnattr_t* __restrict, uid_t);
 #pragma clang diagnostic pop
+#endif
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wnullability-completeness"
 int proc_pidpath(pid_t pid, void *buffer, uint32_t buffersize);
+#pragma clang diagnostic pop
 
 #endif /* NSTask_h */
