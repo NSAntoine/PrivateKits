@@ -7,7 +7,7 @@
 
 #include <TargetConditionals.h>
 
-#if !defined(NSTask_h) && (TARGET_OS_IPHONE && !TARGET_OS_MACCATALYST)
+#if !defined(NSTask_h)
 #define NSTask_h
 
 #if (TARGET_OS_IPHONE && !TARGET_OS_MACCATALYST)
