@@ -138,7 +138,7 @@ public enum FSOperation: Codable {
     
     /// The command line invokation to use for SantanderRootHelper
     /// for this operation
-    var commandLineInvokation: String {
+    public var commandLineInvokation: String {
         switch self {
         case .removeItems(let items):
             return "delete \(items.joined())"
