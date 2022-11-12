@@ -9,8 +9,7 @@
 import Foundation
 
 public protocol RootHelperConfiguration {
-    typealias ActionHandler = ((FSOperation) throws -> Void)
-    
-    var action: ActionHandler { get set }
     var useRootHelper: Bool { get }
+    
+    func perform(_ operation: FSOperation) throws
 }

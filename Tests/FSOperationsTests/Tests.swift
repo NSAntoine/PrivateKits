@@ -49,15 +49,8 @@ class FSOperationTests: XCTestCase {
     
     func testCreateSymlinks() throws {
         try ensurePathsExist(filesToManage)
-        var pathsAndDestinations: [URL: URL] = [:]
         
-        for file in filesToManage {
-            // write dummy data
-            try FSOperation.perform(.writeString(url: file, string: "in file \(file.path)"), rootHelperConf: nil)
-            pathsAndDestinations[file] = homeDir.appendingPathComponent(file.lastPathComponent)
-        }
-        
-        try FSOperation.perform(.symlink(pathsAndDestinations), rootHelperConf: nil)
+        try FSOperation.perform(.symlink(items: filesToManage, resultPath: homeDir), rootHelperConf: nil)
     }
 }
 

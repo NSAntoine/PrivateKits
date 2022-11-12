@@ -32,29 +32,7 @@ public class AssetCatalogWrapper {
     
     public func renditions(forCarArchive url: URL) throws -> (CUICatalog, RenditionCollection) {
         let catalog = try CUICatalog(url: url)
-        var dict: [RenditionType: [Rendition]] = [:]
-        
-        catalog.enumerateNamedLookups { lookup in
-            let rend = Rendition(lookup)
-            if var existing = dict[rend.type] {
-                existing.append(rend)
-                dict[rend.type] = existing
-            } else {
-                dict[rend.type] = [rend]
-            }
-        }
-        
-        var arr = RenditionCollection()
-        for (key, value) in dict {
-            arr.append((key, value))
-        }
-        
-        // sort by Alphabetical order
-        arr = arr.sorted { first, second in
-            return first.type.description < second.type.description
-        }
-        
-        return (catalog, arr)
+        return (catalog, catalog.__getRenditionCollection())
     }
 }
 
@@ -343,6 +321,33 @@ public enum RenditionType: Codable, Hashable, CustomStringConvertible {
 public typealias RenditionPreview = Rendition.Representation
 
 public extension CUICatalog {
+    
+    internal func __getRenditionCollection() -> RenditionCollection {
+        var dict: [RenditionType: [Rendition]] = [:]
+        
+        enumerateNamedLookups { lookup in
+            let rend = Rendition(lookup)
+            if var existing = dict[rend.type] {
+                existing.append(rend)
+                dict[rend.type] = existing
+            } else {
+                dict[rend.type] = [rend]
+            }
+        }
+        
+        var arr = RenditionCollection()
+        for (key, value) in dict {
+            arr.append((key, value))
+        }
+        
+        // sort by Alphabetical order
+        arr = arr.sorted { first, second in
+            return first.type.description < second.type.description
+        }
+        
+        return arr
+    }
+    
     /// Removes an item, and returns a new, updated catalog for the file URL
     func removeItem(_ rendition: Rendition, fileURL: URL) throws {
         let keyStore = try keyStore(forFileURL: fileURL)
