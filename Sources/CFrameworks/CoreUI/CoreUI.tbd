@@ -7,7 +7,7 @@ current-version:       691.2
 compatibility-version: 1
 objc-constraint:       retain_release
 exports:
-  - archs:                [ armv7, armv7s, arm64, arm64e ]
+  - archs:                [ armv7, armv7s, arm64, arm64e, x86_64 ]
     symbols:              [ _CSIEqualMetrics, _CSIIllegalMetrics,
                             _CUIBlendModeDescriptionFromCGBlendMode,
                             _CUIBlendModeLSRDescriptionFromCGBlendMode,
