@@ -35,6 +35,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSURL *)containerURL;
 - (NSURL *)bundleURL;
 - (NSString *)localizedName;
+- (NSData *)iconDataForVariant:(id)variant;
+- (NSData *)iconDataForVariant:(id)variant withOptions:(id)options;
 @end
 
 
