@@ -96,7 +96,7 @@ public enum FSOperation: Codable {
                 try fm.copyItem(at: url, to: resultPath.appendingPathComponent(url.lastPathComponent))
             }
         case .rename(let item, let newPath):
-            try FileManager.default.copyItem(at: item, to: newPath)
+            try FileManager.default.moveItem(at: item, to: newPath)
         case .symlink(let items, let resultPath):
             try _returnFailedItemsDictionaryIfAvailable(items) { url in
                 try fm.createSymbolicLink(at: resultPath.appendingPathComponent(url.lastPathComponent), withDestinationURL: url)
