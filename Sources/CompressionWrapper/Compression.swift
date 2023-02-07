@@ -6,6 +6,7 @@
 //
 
 import Foundation
+@_implementationOnly
 import libarchiveBridge
 
 enum CompressionErrors: Swift.Error, LocalizedError, CustomStringConvertible {
@@ -33,29 +34,43 @@ enum CompressionErrors: Swift.Error, LocalizedError, CustomStringConvertible {
     }
 }
 
-//struct ArchiveOptions: OptionSet {
-//    let rawValue: CInt
-//
-//    static let restoreOwnerAndGroup = ArchiveOptions(rawValue: ARCHIVE_EXTRACT_OWNER)
-//    static let restorePermissions =   ArchiveOptions(rawValue: ARCHIVE_EXTRACT_PERM)
-//    static let restoreTime =          ArchiveOptions(rawValue: ARCHIVE_EXTRACT_TIME)
-//    static let dontOverwite =         ArchiveOptions(rawValue: ARCHIVE_EXTRACT_NO_OVERWRITE)
-//    static let unlink =               ArchiveOptions(rawValue: ARCHIVE_EXTRACT_UNLINK)
-//
-//    static let restoreACLs =          ArchiveOptions(rawValue: ARCHIVE_EXTRACT_ACL)
-//    static let restoreFFLags =        ArchiveOptions(rawValue: ARCHIVE_EXTRACT_FFLAGS)
-//    static let restoreXattrs =        ArchiveOptions(rawValue: ARCHIVE_EXTRACT_XATTR)
-//    static let secureSymlinks =       ArchiveOptions(rawValue: ARCHIVE_EXTRACT_SECURE_SYMLINKS)
-//    static let secureNoDotDot =       ArchiveOptions(rawValue: ARCHIVE_EXTRACT_SECURE_NODOTDOT)
-//}
+public struct ArchiveOptions: OptionSet {
+    public let rawValue: CInt
+    
+    public init(rawValue: CInt) {
+        self.rawValue = rawValue
+    }
+    
+    public static let restoreOwner =            ArchiveOptions(rawValue: ARCHIVE_EXTRACT_OWNER)
+    public static let restorePermissions =      ArchiveOptions(rawValue: ARCHIVE_EXTRACT_PERM)
+    public static let restoreTime =             ArchiveOptions(rawValue: ARCHIVE_EXTRACT_TIME)
+    public static let dontOverwite =            ArchiveOptions(rawValue: ARCHIVE_EXTRACT_NO_OVERWRITE)
+    public static let unlink =                  ArchiveOptions(rawValue: ARCHIVE_EXTRACT_UNLINK)
+
+    public static let restoreACLs =             ArchiveOptions(rawValue: ARCHIVE_EXTRACT_ACL)
+    public static let restoreFFLags =           ArchiveOptions(rawValue: ARCHIVE_EXTRACT_FFLAGS)
+    public static let restoreXattrs =           ArchiveOptions(rawValue: ARCHIVE_EXTRACT_XATTR)
+    public static let secureSymlinks =          ArchiveOptions(rawValue: ARCHIVE_EXTRACT_SECURE_SYMLINKS)
+    public static let secureNoDotDot =          ArchiveOptions(rawValue: ARCHIVE_EXTRACT_SECURE_NODOTDOT)
+    public static let dontCreateParentDirs =    ArchiveOptions(rawValue: ARCHIVE_EXTRACT_NO_AUTODIR)
+    public static let sparse =                  ArchiveOptions(rawValue: ARCHIVE_EXTRACT_SPARSE)
+    public static let includeMacOSMetadata =    ArchiveOptions(rawValue: ARCHIVE_EXTRACT_MAC_METADATA)
+    public static let dontUseHFSCompression =   ArchiveOptions(rawValue: ARCHIVE_EXTRACT_NO_HFS_COMPRESSION)
+    public static let forceUseHFSCompression =  ArchiveOptions(rawValue: ARCHIVE_EXTRACT_HFS_COMPRESSION_FORCED)
+    public static let rejectAbsolutePaths =     ArchiveOptions(rawValue: ARCHIVE_EXTRACT_SECURE_NOABSOLUTEPATHS)
+}
 
 public class Compression {
     public static let shared = Compression()
     
     private init() {}
     
-    public func extract(path compressedFile: URL, to destination: URL) throws {
-        let flags = ARCHIVE_EXTRACT_TIME | ARCHIVE_EXTRACT_PERM | ARCHIVE_EXTRACT_ACL | ARCHIVE_EXTRACT_FFLAGS
+    public func extract(
+        path compressedFile: URL,
+        to destination: URL,
+        options: ArchiveOptions = [.restoreTime, .restorePermissions, .restoreACLs, .restoreFFLags]
+    ) throws {
+        let flags = options.rawValue
         
         let a = archive_read_new()
         archive_read_support_format_all(a)
@@ -86,7 +101,7 @@ public class Compression {
             if r == ARCHIVE_EOF { break } // we're done here.
             
             if r < ARCHIVE_OK {
-                throw CompressionErrors.failedToExtract(description: String(cString: archive_error_string(a)))
+                throw CompressionErrors.failedToExtract(description: .archiveError(for: a))
             }
             
             let currentPathBeingProcessed = archive_entry_pathname(archiveEntry)!
@@ -97,7 +112,7 @@ public class Compression {
             
             r = archive_write_header(ext, archiveEntry)
             if (r < ARCHIVE_OK) {
-                throw CompressionErrors.failedToExtract(description: String(cString: archive_error_string(ext)))
+                throw CompressionErrors.failedToExtract(description: .archiveError(for: ext))
             }
             
             if archive_entry_size(archiveEntry) > 0 {
@@ -106,7 +121,7 @@ public class Compression {
             
             r = archive_write_finish_entry(ext)
             if (r < ARCHIVE_OK) {
-                throw CompressionErrors.failedToExtract(description: String(cString: archive_error_string(ext)))
+                throw CompressionErrors.failedToExtract(description: .archiveError(for: ext))
             }
             
         }
@@ -202,13 +217,13 @@ public class Compression {
             if r == ARCHIVE_EOF { break } // we're done here.
             // libarchive didn't return an okay status, throw error
             if r < ARCHIVE_OK {
-                throw CompressionErrors.failedToCopyData(description: "Error occured while trying to read data block: \(String(cString: archive_error_string(ar)))")
+                throw CompressionErrors.failedToCopyData(description: "Error occured while trying to read data block: \(String.archiveError(for: ar))")
             }
             
             
             r = CInt(archive_write_data_block(aw, buffer, Int(size), offset))
             if r < ARCHIVE_OK {
-                throw CompressionErrors.failedToCopyData(description: "Failed to write data block: \(String(cString: archive_error_string(aw)))")
+                throw CompressionErrors.failedToCopyData(description: "Failed to write data block: \(String.archiveError(for: aw))")
             }
         }
     }
@@ -298,9 +313,4 @@ fileprivate extension String {
     static func archiveError(for archive: OpaquePointer?) -> String {
         return String(cString: archive_error_string(archive))
     }
-}
-
-fileprivate func sizeof<T>(_ val: T) -> Int {
-    //MemoryLayout.stride(ofValue:) is Swift's equivalent of sizeof in C languages
-    return MemoryLayout.stride(ofValue: val)
 }

@@ -138,32 +138,32 @@ public enum FSOperation: Codable {
     
     /// The command line invokation to use for SantanderRootHelper
     /// for this operation
-    public var commandLineInvokation: String {
+    public var commandLineInvokation: [String] {
         switch self {
         case .removeItems(let items):
-            return "delete \(items.joined())"
+            return ["delete", items.joined()]
         case .createFile(let files):
-            return "create --files \(files.joined())"
+            return ["create", "--files", files.joined()]
         case .createDirectory(let directories):
-            return "create --directories \(directories.joined())"
+            return ["create", "--directories", directories.joined()]
         case .moveItem(let items, let resultPath):
-            return "move \(items.joined()) --destination \(resultPath.path)"
+            return ["move", items.joined(), "--destination", resultPath.path]
         case .copyItem(let items, let resultPath):
-            return "copy \(items.joined()) --destination \(resultPath.path)"
+            return ["copy", items.joined(), "--destination", resultPath.path]
         case .symlink(let items, let resultPath):
-            return "link \(items.joined()) --destination \(resultPath.path)"
+            return ["link", items.joined(), "--destination", resultPath.path]
         case .setOwner(let url, let newOwner):
-            return "set-owner-or-group \(url.path) --owner-name \(newOwner)"
+            return ["set-owner-or-group", url.path, "--owner-name", newOwner]
         case .setGroup(let url, let newGroup):
-            return "set-owner-or-group \(url.path) --group-name \(newGroup)"
+            return ["set-owner-or-group", url.path, "--group-name", newGroup]
         case .setPermissions(let url, let newOctalPermissions):
-            return "set-permissions \(url.path) \(newOctalPermissions)"
+            return ["set-permissions", url.path, newOctalPermissions.description]
         case .writeData(let url, _):
-            return "write-data \(url)"
+            return ["write-data", url.path]
         case .writeString(let url, let string):
-            return "write-string \(string) --path \(url.path)"
+            return ["write-string", string, "--path", url.path]
         case .extractCatalog(let catalogFile, let resultPath):
-            return "extract-catalog \(catalogFile.path) --destination \(resultPath.path)"
+            return ["extract-catalog", catalogFile.path, "--destination", resultPath.path]
         }
     }
 }

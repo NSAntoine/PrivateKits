@@ -419,18 +419,17 @@ public extension CUICatalog {
             
             assetStorage.setAsset(csiRep, forKey: carKey)
         case .color(let cgColor):
-            let components = try cgColor.components
-                .unwrap(orThrow: "Failed to edit item \(item.name): Failed to get color components of new color.")
+            let components = try cgColor.components.unwrap("Failed to edit item \(item.name): Failed to get color components of new color.")
             let generator = try CSIGenerator(colorNamed: nil,
                                              colorSpaceID: UInt(item.cuiRend.colorSpaceID()), components: components)
-                .unwrap(orThrow: "Failed to edit item \(item.name): Failed to generate a CSIGenerator in order to edit the item.")
+                .unwrap("Failed to edit item \(item.name): Failed to generate a CSIGenerator in order to edit the item.")
             
             let csiRepresentation = try generator.csiRepresentation(withCompression: true)
-                .unwrap(orThrow: "Failed to generate CSI Representation of the new color.")
+                .unwrap("Failed to generate CSI Representation of the new color.")
             
             let themeStore = _themeStore()
             let keyData = try themeStore.convertRenditionKey(toKeyData: item.namedLookup.key.keyList())
-                .unwrap(orThrow: "Failed to generate data of new item.")
+                .unwrap("Failed to generate data of new item.")
             guard keyStore.setAsset(csiRepresentation, forKey: keyData) else {
                 throw _Errors.failedToEditItem(description: "Failed to set new data for asset.")
             }
@@ -507,7 +506,7 @@ internal extension Optional {
         return self
     }
     
-    func unwrap(orThrow error: String) throws -> Wrapped {
+    func unwrap(_ error: String) throws -> Wrapped {
         return try self.unwrap(orThrow: _Error.stringError(error))
     }
     

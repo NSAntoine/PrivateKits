@@ -9,10 +9,16 @@
 #ifndef CUIThemeRendition_h
 #define CUIThemeRendition_h
 
+#define HAS_CORE_SVG __has_include("../CoreSVG/CoreSVG.h")
+
 @import CoreGraphics;
+
 #include "structs.h"
 #include "CUIRenditionKey.h"
-#include "../CoreSVG/CoreSVG.h"
+
+#if HAS_CORE_SVG
+#   include "../CoreSVG/CoreSVG.h"
+#endif
 
 #pragma clang diagnostic push
 // for the `Pointer is missing a nullability type specifier` warnings:
@@ -38,7 +44,9 @@
 - (int)pixelFormat;
 - (bool)isInternalLink;
 - (CUIRenditionKey *)linkingToRendition;
+#if HAS_CORE_SVG
 - (CGSVGDocumentRef)svgDocument;
+#endif
 - (struct CGRect)_destinationFrame;
 - (CGImageRef _Nullable)uncroppedImage;
 - (CGImageRef _Nullable)unslicedImage;

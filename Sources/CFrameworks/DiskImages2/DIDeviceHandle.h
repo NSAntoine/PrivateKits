@@ -12,7 +12,7 @@
 @import Foundation;
 
 @interface DIDeviceHandle : NSObject
-@property (retain, nonatomic) NSString * _Nonnull BSDName;
+@property (nonnull, retain, nonatomic) NSString *BSDName;
 @property (readonly, nonatomic) NSUInteger regEntryID;
 @property (nonatomic) BOOL handleRefCount;
 @end
