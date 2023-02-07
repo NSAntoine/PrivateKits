@@ -24,6 +24,7 @@ public enum FSOperation: Codable {
     case moveItem(items: [URL], resultPath: URL)
     case copyItem(items: [URL], resultPath: URL)
     case symlink (items: [URL], resultPath: URL)
+    case rename  (item: URL, newPath: URL)
     
     case setOwner(url: URL, newOwner: String)
     case setGroup(url: URL, newGroup: String)
@@ -94,6 +95,8 @@ public enum FSOperation: Codable {
             try _returnFailedItemsDictionaryIfAvailable(items) { url in
                 try fm.copyItem(at: url, to: resultPath.appendingPathComponent(url.lastPathComponent))
             }
+        case .rename(let item, let newPath):
+            try FileManager.default.copyItem(at: item, to: newPath)
         case .symlink(let items, let resultPath):
             try _returnFailedItemsDictionaryIfAvailable(items) { url in
                 try fm.createSymbolicLink(at: resultPath.appendingPathComponent(url.lastPathComponent), withDestinationURL: url)
@@ -150,6 +153,8 @@ public enum FSOperation: Codable {
             return ["move", items.joined(), "--destination", resultPath.path]
         case .copyItem(let items, let resultPath):
             return ["copy", items.joined(), "--destination", resultPath.path]
+        case .rename(let item, let newPath):
+            return ["rename", item.path, newPath.path]
         case .symlink(let items, let resultPath):
             return ["link", items.joined(), "--destination", resultPath.path]
         case .setOwner(let url, let newOwner):
