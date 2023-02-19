@@ -229,6 +229,21 @@ public class Rendition: Hashable {
             
             return view
         }
+        /*
+        #else
+        public var nsView: NSView {
+            switch self {
+            case .color(let color):
+                let view = NSView()
+                view.wantsLayer = true
+                view.layer?.backgroundColor = color
+                return view
+            case .image(let image):
+                return NSImageView(image: NSImage(cgImage: image,
+                                                  size: CGSize(width: image.width, height: image.height)))
+            }
+        }
+         */
         #endif
         
         public init?(_ rendition: Rendition) {
