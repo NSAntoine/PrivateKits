@@ -17,9 +17,10 @@
 
 NS_ASSUME_NONNULL_BEGIN
 @interface CUICatalog : NSObject
++ (CUICatalog *)defaultUICatalogForBundle:(NSBundle *)bundle;
+- (id)initWithURL:(NSURL *)url error:(NSError **)error SWIFT_THROWING;
 - (void)enumerateNamedLookupsUsingBlock:(void (^)(CUINamedLookup *namedAsset))block;
 - (CUIStructuredThemeStore *)_themeStore;
-- (id)initWithURL:(NSURL *)url error:(NSError **)error SWIFT_THROWING;
 @end
 
 NS_ASSUME_NONNULL_END

@@ -34,6 +34,12 @@ public class AssetCatalogWrapper {
         let catalog = try CUICatalog(url: url)
         return (catalog, catalog.__getRenditionCollection())
     }
+    /*
+    public func renditions(forBundle bundle: Bundle) throws -> (CUICatalog, RenditionCollection) {
+        let catalog = CUICatalog.defaultUICatalog(for: bundle)
+        return (catalog, catalog.__getRenditionCollection())
+    }
+     */
 }
 
 /// Represents a Core UI rendition
