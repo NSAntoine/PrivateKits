@@ -371,16 +371,27 @@ public extension CUICatalog {
     
     /// Removes an item, and returns a new, updated catalog for the file URL
     func removeItem(_ rendition: Rendition, fileURL: URL) throws {
+        let keyStore = try removingItem(rendition, fileURL: fileURL)
+        try writekeyStore(keyStore, to: fileURL)
+    }
+    
+    /// Removes an item, and returns a new, updated catalog for the file URL
+    func removingItem(_ rendition: Rendition, fileURL: URL) throws -> CUIMutableCommonAssetStorage {
         let keyStore = try keyStore(forFileURL: fileURL)
         guard let data = _themeStore().convertRenditionKey(toKeyData: rendition.cuiRend.key()) else {
             throw _Errors.unableToAccessItemData
         }
         
         keyStore.removeAsset(forKey: data)
-        try writekeyStore(keyStore, to: fileURL)
+        return keyStore
     }
     
     func editItem(_ item: Rendition, fileURL: URL, to newValue: Rendition.Representation) throws {
+        let keyStore = try editingItem(item, fileURL: fileURL, to: newValue)
+        try writekeyStore(keyStore, to: fileURL)
+    }
+    
+    func editingItem(_ item: Rendition, fileURL: URL, to newValue: Rendition.Representation) throws -> CUIMutableCommonAssetStorage {
         guard let keyStore = CUIMutableCommonAssetStorage(path: fileURL.path, forWriting: true) else {
             throw _Errors.unableToAccessCatalogFile(fileURL: fileURL)
         }
@@ -456,7 +467,7 @@ public extension CUICatalog {
             }
         }
         
-        try writekeyStore(keyStore, to: fileURL)
+        return keyStore
     }
     
     // so we don't have to repeat code above
