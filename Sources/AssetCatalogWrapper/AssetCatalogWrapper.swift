@@ -264,7 +264,7 @@ public class Rendition: Hashable {
     }
 }
 
-public enum RenditionType: Codable, Hashable, CustomStringConvertible, CaseIterable {
+public enum RenditionType: Int, Codable, Hashable, CustomStringConvertible, CaseIterable {
     case image, icon, imageSet, multiSizeImageSet
     case pdf
     case color
