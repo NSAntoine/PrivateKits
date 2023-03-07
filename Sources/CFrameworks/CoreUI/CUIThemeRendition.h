@@ -54,6 +54,7 @@
 - (bool)substituteWithSystemColor;
 - (NSString *)systemColorName;
 - (CGImageRef)createImageFromPDFRenditionWithScale:(double)arg1;
+- (CGPDFDocumentRef)pdfDocument;
 - (struct CGRect)_destinationFrame;
 - (struct CGSize)unslicedSize;
 - (_Nonnull id)initWithCSIData:(NSData *)arg1 forKey:(const struct renditionkeytoken *)arg2;
