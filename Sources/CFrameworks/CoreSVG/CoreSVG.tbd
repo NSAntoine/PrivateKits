@@ -1,16 +1,17 @@
 --- !tapi-tbd-v3
-archs:                 [ armv7, armv7s, arm64, arm64e, x86_64-maccatalyst ]
+archs:                 [ armv7, armv7s, arm64, arm64e, x86_64 ]
 platform:              (null)
 install-name:          /System/Library/PrivateFrameworks/CoreSVG.framework/CoreSVG
 current-version:       1
 compatibility-version: 1
 exports:
-  - archs:                [ armv7, armv7s, arm64, arm64e, x86_64-maccatalyst ]
+  - archs:                [ armv7, armv7s, arm64, arm64e, x86_64 ]
     symbols:              [ _CGContextDrawSVGDocument, _CGContextDrawSVGNode,
                             _CGSVGAtomCopyString, _CGSVGAtomFromCString,
                             _CGSVGAtomFromString, _CGSVGAtomGetCString,
                             _CGSVGAttributeCopyString, _CGSVGAttributeCreateWithAtom,
                             _CGSVGAttributeCreateWithCString,
+                            _CGSVGDocumentGetCanvasSize,
                             _CGSVGAttributeCreateWithClipPath,
                             _CGSVGAttributeCreateWithColor,
                             _CGSVGAttributeCreateWithFloat,

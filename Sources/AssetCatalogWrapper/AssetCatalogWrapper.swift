@@ -13,6 +13,7 @@ import AppKit
 #endif
 
 import UniformTypeIdentifiers
+import CoreSVGBridge
 
 @_exported
 import CoreUIBridge
@@ -79,6 +80,23 @@ public class Rendition: Hashable {
         switch type {
         case .pdf:
             return cuiRend.createImageFromPDFRendition(withScale: _getScreenScale())?.takeUnretainedValue()
+        case .svg:
+            // https://github.com/showxu/cartools/blob/ccb872e0cc819c9d800d8a5cc65f558d7a1e31f4/cartooldt/CoreUIExt.swift#L64
+            guard let svgDocument = cuiRend.svgDocument() else {
+                return nil
+            }
+            
+            
+            let size = CGSVGDocumentGetCanvasSize(svgDocument)
+            let context = CGContext(data: nil,
+                      width: Int(size.width),
+                      height: Int(size.height),
+                      bitsPerComponent: 0,
+                      bytesPerRow: 0,
+                      space: CGColorSpaceCreateDeviceRGB(),
+                      bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)
+            CGContextDrawSVGDocument(context, svgDocument)
+            return context?.makeImage()
         default:
             return nil
         }

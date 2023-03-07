@@ -46,7 +46,8 @@ let package = Package(
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
         // Targets can depend on other targets in this package, and on products in packages this package depends on.
         .target(name: "ApplicationsWrapper", dependencies: ["CFrameworks"]),
-        .target(name: "AssetCatalogWrapper", dependencies: ["CFrameworks"], linkerSettings: [coreUILinkerSetting]),
+        .target(name: "AssetCatalogWrapper", dependencies: ["CFrameworks", "SVGWrapper"],
+                linkerSettings: [coreUILinkerSetting]),
         .target(name: "CompressionWrapper", dependencies: ["CFrameworks"], linkerSettings: [.linkedLibrary("archive")]),
         .target(name: "DiskImagesWrapper", dependencies: ["CFrameworks"], linkerSettings: [di2LinkerSetting]),
         .target(name: "SVGWrapper", dependencies: ["CFrameworks"], linkerSettings: [coreSVGLinkerSetting]),
