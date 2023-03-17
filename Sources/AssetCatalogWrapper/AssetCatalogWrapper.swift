@@ -150,18 +150,9 @@ public class Rendition: Hashable {
         case .pdf:
             return cuiRend.createImageFromPDFRendition(withScale: _getScreenScale())?.takeUnretainedValue()
         case .svg:
-            // https://github.com/showxu/cartools/blob/ccb872e0cc819c9d800d8a5cc65f558d7a1e31f4/cartooldt/CoreUIExt.swift#L64
-            let w = Int(ceil(CGSVGDocumentGetCanvasSize(cuiRend.svgDocument()).width))
-            let h = Int(ceil(CGSVGDocumentGetCanvasSize(cuiRend.svgDocument()).height))
-            let c = CGContext(data: nil,
-                              width: w,
-                              height: h,
-                              bitsPerComponent: 8,
-                              bytesPerRow: 0,
-                              space: CGColorSpaceCreateDeviceRGB(),
-                              bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)
-            CGContextDrawSVGDocument(c, cuiRend.svgDocument())
-            return c?.makeImage()
+            let document = SVGDocument(doc: cuiRend.svgDocument())
+            document.destroyUponDeinitialization = false
+            return document.cgImage()
         default:
             return nil
         }
