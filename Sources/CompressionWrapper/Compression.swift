@@ -152,9 +152,10 @@ public class Compression {
                 }
                 
                 processHandler?(path)
-                guard stat(fsRepresentation, &st) == 0 else {
-                    throw CompressionErrors.failedToArchive(dsecription: "Failed to stat (get information of) path \(path.path): \(String.errnoString())")
-                }
+//                guard stat(fsRepresentation, &st) == 0 else {
+//                    throw CompressionErrors.failedToArchive(dsecription: "Failed to stat (get information of) path \(path.path): \(String.errnoString())")
+//                }
+				stat(fsRepresentation, &st)
                 
                 let attrs = try FileManager.default.attributesOfItem(atPath: path.path)
                 guard let type = attrs[.type] as? FileAttributeType, let existingPosixPermissions = attrs[.posixPermissions] as? mode_t else {
