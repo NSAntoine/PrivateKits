@@ -129,7 +129,7 @@ public class Compression {
     
     /// Compresses the paths given (alongside their subdirectories)  to the given outputPath.
     /// The process handler is called on every URL which gets processed, hence the name
-    public func compress(paths: [URL], outputPath: URL, format: FormatType, processHandler: ((URL) -> Void)? = nil) throws {
+	public func compress(paths: [URL], outputPath: URL, format: FormatType, filenameExcludes: [String] = [], processHandler: ((URL) -> Void)? = nil) throws {
         let a = archive_write_new()
         var entry: OpaquePointer? = nil
         let buff = UnsafeMutableRawPointer.allocate(byteCount: 8192, alignment: 4)
@@ -152,10 +152,9 @@ public class Compression {
                 }
                 
                 processHandler?(path)
-//                guard stat(fsRepresentation, &st) == 0 else {
-//                    throw CompressionErrors.failedToArchive(dsecription: "Failed to stat (get information of) path \(path.path): \(String.errnoString())")
-//                }
-				stat(fsRepresentation, &st)
+                guard stat(fsRepresentation, &st) == 0 else {
+                    throw CompressionErrors.failedToArchive(dsecription: "Failed to stat (get information of) path \(path.path): \(String.errnoString())")
+                }
                 
                 let attrs = try FileManager.default.attributesOfItem(atPath: path.path)
                 guard let type = attrs[.type] as? FileAttributeType, let existingPosixPermissions = attrs[.posixPermissions] as? mode_t else {
@@ -200,7 +199,9 @@ public class Compression {
         }
         
         for path in allPaths {
-            try _archiveIndividiualPath(path)
+			if !filenameExcludes.contains(path.lastPathComponent) {
+				try _archiveIndividiualPath(path)
+			}
         }
         
         archive_write_close(a)
