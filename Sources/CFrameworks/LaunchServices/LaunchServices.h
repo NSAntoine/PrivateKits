@@ -20,10 +20,15 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface LSApplicationProxy
 @property (readonly, nonatomic) NSString *applicationType;
-@property (getter=isDeletable, readonly, nonatomic) BOOL deletable;
+
 @property (getter=isBetaApp, readonly, nonatomic) BOOL betaApp;
+@property (getter=isDeletable, readonly, nonatomic) BOOL deletable;
 @property (getter=isRestricted, readonly, nonatomic) BOOL restricted;
 @property (getter=isContainerized, readonly, nonatomic) BOOL containerized;
+@property (getter=isAdHocCodeSigned, readonly, nonatomic) BOOL adHocCodeSigned;
+@property (getter=isAppStoreVendable, readonly, nonatomic) BOOL appStoreVendable;
+@property (getter=isLaunchProhibited, readonly, nonatomic) BOOL launchProhibited;
+
 @property (readonly, nonatomic) NSSet <NSString *> *claimedURLSchemes;
 @property (readonly, nonatomic) NSString *teamID;
 @property (copy, nonatomic) NSString *sdkVersion;
