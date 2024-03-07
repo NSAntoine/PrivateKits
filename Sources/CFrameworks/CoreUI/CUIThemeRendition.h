@@ -58,6 +58,7 @@
 - (struct CGRect)_destinationFrame;
 - (struct CGSize)unslicedSize;
 - (_Nonnull id)initWithCSIData:(NSData *)arg1 forKey:(const struct renditionkeytoken *)arg2;
+- (NSData *)data; // Null if the classForCoder isn't _CUIRawDataRendition
 @end
 
 
@@ -65,10 +66,11 @@
 - (NSData *)rawData;
 @end
 
-
-@interface _CUIRawDataRendition : CUIThemeRendition
+/*
+ @interface _CUIRawDataRendition : CUIThemeRendition
 - (id)data;
 @end
+ */
 
 #pragma clang diagnostic pop
 
