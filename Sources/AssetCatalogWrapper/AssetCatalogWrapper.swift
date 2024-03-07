@@ -347,7 +347,7 @@ public enum RenditionType: Int, Codable, Hashable, CustomStringConvertible, Case
     case unknown
     
     public init(namedLookup: CUINamedLookup) {
-        let className = String(describing: namedLookup.rendition.classForCoder)
+        let className = NSStringFromClass(namedLookup.rendition.classForCoder)
         
         switch className {
         case "_CUIRawPixelRendition": // non PNG images? lmao
