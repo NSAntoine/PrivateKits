@@ -460,12 +460,12 @@ public extension CUICatalog {
         return keyStore
     }
     
-    func editItem(_ item: Rendition, fileURL: URL, to newValue: Rendition.Representation) throws {
-        let keyStore = try editingItem(item, fileURL: fileURL, to: newValue)
+    func editItem(_ item: Rendition, fileURL: URL, to newValue: Rendition.Representation, isAlphaAllowed: Bool = true) throws {
+        let keyStore = try editingItem(item, fileURL: fileURL, to: newValue, isAlphaAllowed: isAlphaAllowed)
         try writekeyStore(keyStore, to: fileURL)
     }
     
-    func editingItem(_ item: Rendition, fileURL: URL, to newValue: Rendition.Representation) throws -> CUIMutableCommonAssetStorage {
+    func editingItem(_ item: Rendition, fileURL: URL, to newValue: Rendition.Representation, isAlphaAllowed: Bool = true) throws -> CUIMutableCommonAssetStorage {
         guard let keyStore = CUIMutableCommonAssetStorage(path: fileURL.path, forWriting: true) else {
             throw _Errors.unableToAccessCatalogFile(fileURL: fileURL)
         }
@@ -500,7 +500,11 @@ public extension CUICatalog {
             else {
                 throw _Errors.failedToEditItem()
             }
-            
+
+            if !isAlphaAllowed {
+                disableAlpha(for: wrapper)
+            }
+
             let context = Unmanaged<CGContext>.fromOpaque(wrapper.bitmapContext()).takeUnretainedValue()
             
             if isInternalLink {
@@ -558,7 +562,11 @@ public extension CUICatalog {
             throw _Errors.unableToWriteToCatalogFile(fileURL: fileURL)
         }
     }
-    
+
+    private func disableAlpha(for wrapper: CSIBitmapWrapper) {
+        wrapper.setSourceAlphaInfo(.noneSkipLast)
+    }
+
     private enum _Errors: Error, LocalizedError {
         case unableToAccessCatalogFile(fileURL: URL)
         case unableToWriteToCatalogFile(fileURL: URL)
