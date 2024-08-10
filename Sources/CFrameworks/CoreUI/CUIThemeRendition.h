@@ -23,6 +23,27 @@
 #pragma clang diagnostic push
 // for the `Pointer is missing a nullability type specifier` warnings:
 #pragma clang diagnostic ignored "-Wnullability-completeness"
+
+typedef NS_ENUM(NSInteger, CUIBitmapEncoding) {
+    CUIBitmapEncodingNone = 0,
+    CUIBitmapEncodingRLE = 1,
+    CUIBitmapEncodingZIP = 2,
+    CUIBitmapEncodingLZVN= 3,
+    CUIBitmapEncodingLZFSE = 4,
+    CUIBitmapEncodingJPEG_LZFSE = 5,
+    CUIBitmapEncodingBlurred = 6,
+    CUIBitmapEncodingASTC = 7,
+    CUIBitmapEncodingDXTC = 8,
+    CUIBitmapEncodingPaletteImg = 9,
+    CUIBitmapEncodingHEVC = 10,
+    CUIBitmapEncodingDeepmapLZFSE = 11,
+    CUIBitmapEncodingDeepmap2 = 12,
+    CUIBitmapEncodingARGB = 13,
+    CUIBitmapEncodingJPEG = 14,
+    CUIBitmapEncodingHEIF = 15,
+    CUIBitmapEncodingUnknown = 16
+};
+
 @interface CUIThemeRendition : NSObject
 @property(nonatomic) long long type;
 @property(nonatomic) unsigned int subtype;
@@ -36,6 +57,7 @@
 - (NSString * _Nonnull)name;
 - (unsigned long long)colorSpaceID;
 - (double)scale;
+- (NSDictionary *)properties;
 - (long long)templateRenderingMode;
 - (NSString * _Nullable)utiType;
 - (bool)isHeaderFlaggedFPO;
@@ -59,6 +81,8 @@
 - (struct CGSize)unslicedSize;
 - (_Nonnull id)initWithCSIData:(NSData *)arg1 forKey:(const struct renditionkeytoken *)arg2;
 - (NSData *)data; // Null if the classForCoder isn't _CUIRawDataRendition
+- (NSString *)utiType;
+- (CUIBitmapEncoding)bitmapEncoding;
 @end
 
 

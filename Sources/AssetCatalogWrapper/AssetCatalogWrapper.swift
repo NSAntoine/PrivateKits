@@ -635,3 +635,46 @@ fileprivate extension Optional {
     }
     
 }
+
+extension CUIBitmapEncoding : CustomStringConvertible {
+    public var description: String {
+        switch self {
+        case .none:
+            return "uncompressed"
+        case .RLE:
+            return "rle"
+        case .ZIP:
+            return "zip"
+        case .LZVN:
+            return "lzvn"
+        case .LZFSE:
+            return "lzfse"
+        case .JPEG_LZFSE:
+            return "jpeg-lzfse"
+        case .blurred:
+            return "blurred"
+        case .ASTC:
+            return "astc"
+        case .DXTC:
+            return "dxtc"
+        case .paletteImg:
+            return "palette-img"
+        case .HEVC:
+            return "hevc"
+        case .deepmapLZFSE:
+            return "deepmap-lzfse"
+        case .deepmap2:
+            return "deepmap2"
+        case .ARGB:
+            return "ARGB"
+        case .JPEG:
+            return "JPEG"
+        case .HEIF:
+            return "HEIF"
+        case .unknown:
+            return "(Unknown)"
+        default:
+            return "(Unknown)"
+        }
+    }
+}
