@@ -33,15 +33,11 @@ typedef NS_ENUM(NSInteger, CUIBitmapEncoding) {
     CUIBitmapEncodingJPEG_LZFSE = 5,
     CUIBitmapEncodingBlurred = 6,
     CUIBitmapEncodingASTC = 7,
-    CUIBitmapEncodingDXTC = 8,
-    CUIBitmapEncodingPaletteImg = 9,
-    CUIBitmapEncodingHEVC = 10,
-    CUIBitmapEncodingDeepmapLZFSE = 11,
-    CUIBitmapEncodingDeepmap2 = 12,
-    CUIBitmapEncodingARGB = 13,
-    CUIBitmapEncodingJPEG = 14,
-    CUIBitmapEncodingHEIF = 15,
-    CUIBitmapEncodingUnknown = 16
+    CUIBitmapEncodingPaletteImg = 8,
+    CUIBitmapEncodingHEVC = 9,
+    CUIBitmapEncodingDeepmapLZFSE = 10,
+    CUIBitmapEncodingDeepmap2 = 11,
+    CUIBitmapEncodingDXTC = 12,
 };
 
 @interface CUIThemeRendition : NSObject

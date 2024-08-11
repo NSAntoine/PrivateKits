@@ -655,8 +655,6 @@ extension CUIBitmapEncoding : CustomStringConvertible {
             return "blurred"
         case .ASTC:
             return "astc"
-        case .DXTC:
-            return "dxtc"
         case .paletteImg:
             return "palette-img"
         case .HEVC:
@@ -665,14 +663,8 @@ extension CUIBitmapEncoding : CustomStringConvertible {
             return "deepmap-lzfse"
         case .deepmap2:
             return "deepmap2"
-        case .ARGB:
-            return "ARGB"
-        case .JPEG:
-            return "JPEG"
-        case .HEIF:
-            return "HEIF"
-        case .unknown:
-            return "(Unknown)"
+        case .DXTC:
+            return "dxtc"
         default:
             return "(Unknown)"
         }
