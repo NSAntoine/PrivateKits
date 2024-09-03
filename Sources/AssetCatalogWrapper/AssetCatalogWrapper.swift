@@ -488,7 +488,7 @@ public extension CUICatalog {
                 if CUIThemeRendition.responds(to: #selector(CUIThemeRendition.init(csiData:forKey:))) {
                     rendition = CUIThemeRendition(csiData: assetStorage.asset(forKey: carKey!), forKey: keyList)
                 } else {
-                    rendition = CUIThemeRendition(csiData: assetStorage.asset(forKey: carKey!), forKey: keyList, version: 0)
+                    rendition = CUIThemeRendition(csiData: assetStorage.asset(forKey: carKey!), forKey: keyList, version: 0)!
                 }
             }
             
