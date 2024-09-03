@@ -76,6 +76,7 @@ typedef NS_ENUM(NSInteger, CUIBitmapEncoding) {
 - (struct CGRect)_destinationFrame;
 - (struct CGSize)unslicedSize;
 - (_Nonnull id)initWithCSIData:(NSData *)arg1 forKey:(const struct renditionkeytoken *)arg2;
+- (_Nonnull id)initWithCSIData:(NSData *)csidata forKey:(const struct renditionkeytoken *)key version:(unsigned int)version;
 - (NSData *)data; // Null if the classForCoder isn't _CUIRawDataRendition
 - (NSString *)utiType;
 - (CUIBitmapEncoding)bitmapEncoding;
